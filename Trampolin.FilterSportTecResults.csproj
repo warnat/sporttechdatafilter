@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <OutputType>WinExe</OutputType>
+	  <TargetFramework>net48</TargetFramework>
+	  <UseWindowsForms>true</UseWindowsForms>
+	  <Nullable>disable</Nullable>
+	  <ImplicitUsings>false</ImplicitUsings>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="System.Drawing" />
+	</ItemGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="CsvTools" Version="1.0.12" />
+  </ItemGroup>
+
+</Project>
