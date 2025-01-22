@@ -8,6 +8,7 @@ namespace Trampolin.FilterSportTecResults
 {
     public partial class Form1 : Form
     {
+        private List<Eintrag> zeilen = new List<Eintrag>();
         public Form1()
         {
             InitializeComponent();
@@ -17,50 +18,42 @@ namespace Trampolin.FilterSportTecResults
         {
             string fname = txtInputFileName.Text.Replace("\"", "");
 
-            // See methods on DataTable.New for loading a DataTable.
-            var dt = DataTable.New.ReadLazy(fname); // Fast streaming load a CSV from disk. 
+            var dt = DataTable.New.ReadLazy(fname);
 
-            var zeilen = new List<Eintrag>();
+            zeilen = new List<Eintrag>();
             int count = 0;
             foreach (var row in dt.Rows)
             {
-                var item = row.As<ImportantColumns>();
-                if (item.Judge != "E∑") continue;
-                if (item.Discipline != "TRA") continue;
-                if (item.Competition.Contains("TEAM")) continue;
-
-                item.Sum = row.GetValueOrEmpty("∑");
-                //System.Diagnostics.Debug.WriteLine(item.Competition + " " + item.Surname + " " + item.GivenName + " = " + item.MarkTotal + "/" + item.Routine);
+                if (row["Judge"] != "E∑") continue;
+                if (row["Discipline"] != "TRA") continue;
+                if (row["Competition"].Contains("TEAM")) continue;
 
                 var eintrag = new Eintrag
                 {
-                    Vorname = item.GivenName,
-                    Nachname = item.Surname,
-                    Verein = item.Representing,
-                    Klasse = item.Competition,
-                    Art = item.Discipline,
-                    Platz = int.Parse(item.Rank),
-                    Punkte = double.Parse(item.MarkTotal) / 1000,
-                    Durchgang = int.Parse(item.Routine)
+                    Vorname = row["Given Name"],
+                    Nachname = row["Surname"],
+                    Verein = row["Representing"],
+                    Klasse = row["Competition"],
+                    Art = row["Discipline"],
+                    Platz = int.Parse(row["Rank"]),
+                    Punkte = double.Parse(row["Mark Total"]) / 1000,
+                    Durchgang = int.Parse(row["Routine #"])
                 };
 
-                if (true)
+                var suche = zeilen.FirstOrDefault(
+                    x => x.Vorname == eintrag.Vorname
+                        && x.Nachname == eintrag.Nachname
+                        && x.Klasse == eintrag.Klasse
+                        && x.Art == eintrag.Art);
+                if (suche != null)
                 {
-                    var suche = zeilen.FirstOrDefault(
-                        x => x.Vorname == eintrag.Vorname 
-                            && x.Nachname == eintrag.Nachname 
-                            && x.Klasse == eintrag.Klasse
-                            && x.Art == eintrag.Art);
-                    if (suche != null)
+                    if (suche.Durchgang < eintrag.Durchgang)
                     {
-                        if (suche.Durchgang < eintrag.Durchgang)
-                        {
-                            suche.Durchgang = eintrag.Durchgang;
-                            suche.Platz = eintrag.Platz;
-                            suche.Punkte = eintrag.Punkte;
-                        }
-                        continue;
+                        suche.Durchgang = eintrag.Durchgang;
+                        suche.Platz = eintrag.Platz;
+                        suche.Punkte = eintrag.Punkte;
                     }
+                    continue;
                 }
 
                 zeilen.Add(eintrag);
@@ -68,7 +61,12 @@ namespace Trampolin.FilterSportTecResults
                 //if (count > 100) break;
             }
 
-            gridInput.DataSource = zeilen.OrderBy(ee=>ee.Klasse).ThenBy(ee=>ee.Platz).ToList();
+            cmbClassFilter.Items.AddRange(zeilen.Select(ee => ee.Klasse).Distinct().ToArray());
+            cmbClassFilter.SelectedItem = cmbClassFilter.Items[0];
+
+            zeilen = zeilen.OrderBy(ee => ee.Klasse).ThenBy(ee => ee.Platz).ToList();
+
+            gridInput.DataSource = zeilen; 
             tabs.SelectedIndex = 1;
         }
 
@@ -107,6 +105,43 @@ namespace Trampolin.FilterSportTecResults
             return ascending ?
                 list.OrderBy(_ => _.GetType().GetProperty(column).GetValue(_)).ToList() :
                 list.OrderByDescending(_ => _.GetType().GetProperty(column).GetValue(_)).ToList();
+        }
+
+        private static string dbl(double z)
+        {
+            return z.ToString("##0.000").Replace(".", ",");
+        }
+
+        private void btnCreateOutputLtePlace_Click(object sender, EventArgs e)
+        {
+            txtOutput.Text = "";
+            tabs.SelectedIndex = 3;
+            int place = int.Parse(txtPlaceFilter.Text);
+
+            foreach (var item in zeilen)
+            {
+                if (item.Klasse != cmbClassFilter.SelectedItem.ToString()) continue;
+                if (item.Platz <= place)
+                {
+                    txtOutput.Text += item.Klasse + "\t" + item.Platz + "\t" + dbl(item.Punkte) + "\t" + item.Vorname + "\t" + item.Nachname + "\t" + item.Verein + "\r\n";
+                }
+            }
+        }
+
+        private void btnCreateOutputGtPlace_Click(object sender, EventArgs e)
+        {
+            txtOutput.Text = "";
+            tabs.SelectedIndex = 3;
+            int place = int.Parse(txtPlaceFilter.Text);
+
+            foreach (var item in zeilen)
+            {
+                if (item.Klasse != cmbClassFilter.SelectedItem.ToString()) continue;
+                if (item.Platz > place)
+                {
+                    txtOutput.Text += item.Klasse + "\t" + item.Platz + "\t" + dbl(item.Punkte) + "\t" + item.Vorname + "\t" + item.Nachname + "\t" + item.Verein + "\r\n";
+                }
+            }
         }
     }
 }
