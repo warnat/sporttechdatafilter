@@ -117,6 +117,62 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="txtTemplate.Text" xml:space="preserve">
+    <value>\documentclass[20pt,a4paper,ngerman]{article}
+\usepackage{pdflscape}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\usepackage{lipsum}
+\usepackage{csquotes}
+\usepackage[top=7.0cm,bottom=7.0cm,left=8.0cm,right=3.0cm]{geometry}
+\usepackage{array}
+\usepackage{LobsterTwo}
+\begin{document}
+\begin{landscape}
+\pagenumbering{gobble}
+\begin{center}
+%% FOREACH ITEM
+{
+	\fontsize{22}{1}\selectfont
+	\bfseries
+	Elisabeth Johanna Krückels-Wellenkrampf  %% REPLACE VORNAME NAME
+}
+\vspace{0.5cm}\\
+{
+	\fontsize{22}{1}\selectfont
+	vom
+	ETSV Rinteln -Gugelhupf e.V. %% REPLACE VEREIN
+}
+\vspace{1cm}\\
+{
+	\fontsize{16}{1}\selectfont
+	erreichte in der Wettkampfklasse
+}
+\vspace{0.5cm}\\
+{
+	\fontsize{20}{1}\selectfont
+	Basis - 13/14 (female)	%% REPLACE WETTKAMPFKLASSE
+}
+\vspace{1cm}\\
+{
+	\fontsize{20}{1}\selectfont
+	mit 
+	72,305       %% REPLACE PUNKTE
+	Punkten
+}
+\vspace{0.5cm}\\
+{
+	\fontsize{22}{1}\selectfont
+	den 
+	9		%% REPLACE PLATZ
+	. Platz
+}
+\newpage
+%% NEXT ITEM
+\end{center}
+\end{landscape}
+\end{document}</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

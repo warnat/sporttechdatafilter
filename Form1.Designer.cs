@@ -46,12 +46,20 @@ namespace Trampolin.FilterSportTecResults
             this.btnCreateOutputLtePlace = new System.Windows.Forms.Button();
             this.Output = new System.Windows.Forms.TabPage();
             this.txtOutput = new System.Windows.Forms.TextBox();
+            this.tabReportTemplate = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtPdfPrg = new System.Windows.Forms.TextBox();
+            this.btnMakePdf = new System.Windows.Forms.Button();
+            this.txtTemplate = new System.Windows.Forms.TextBox();
             this.tabs.SuspendLayout();
             this.tabInput.SuspendLayout();
             this.tabViewInput.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridInput)).BeginInit();
             this.tabFilter.SuspendLayout();
             this.Output.SuspendLayout();
+            this.tabReportTemplate.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabs
@@ -60,13 +68,16 @@ namespace Trampolin.FilterSportTecResults
             this.tabs.Controls.Add(this.tabViewInput);
             this.tabs.Controls.Add(this.tabFilter);
             this.tabs.Controls.Add(this.Output);
+            this.tabs.Controls.Add(this.tabReportTemplate);
+            this.tabs.Controls.Add(this.tabPage2);
             this.tabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabs.Location = new System.Drawing.Point(0, 0);
             this.tabs.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
-            this.tabs.Size = new System.Drawing.Size(888, 468);
+            this.tabs.Size = new System.Drawing.Size(969, 651);
             this.tabs.TabIndex = 0;
+            this.tabs.SelectedIndexChanged += new System.EventHandler(this.tabs_SelectedIndexChanged);
             // 
             // tabInput
             // 
@@ -110,7 +121,7 @@ namespace Trampolin.FilterSportTecResults
             this.txtInputFileName.Name = "txtInputFileName";
             this.txtInputFileName.Size = new System.Drawing.Size(563, 22);
             this.txtInputFileName.TabIndex = 0;
-            this.txtInputFileName.Text = "\"C:\\Users\\Ralf\\Downloads\\Wölfe Cup 2024(2).csv\"";
+            this.txtInputFileName.Text = ".\\Wölfe Cup 2024.csv";
             this.txtInputFileName.DragDrop += new System.Windows.Forms.DragEventHandler(this.txtInputFileName_DragDrop);
             this.txtInputFileName.DragOver += new System.Windows.Forms.DragEventHandler(this.txtInputFileName_DragOver);
             // 
@@ -237,11 +248,77 @@ namespace Trampolin.FilterSportTecResults
             this.txtOutput.TabIndex = 0;
             this.txtOutput.WordWrap = false;
             // 
+            // tabReportTemplate
+            // 
+            this.tabReportTemplate.Controls.Add(this.txtTemplate);
+            this.tabReportTemplate.Location = new System.Drawing.Point(4, 25);
+            this.tabReportTemplate.Name = "tabReportTemplate";
+            this.tabReportTemplate.Size = new System.Drawing.Size(961, 622);
+            this.tabReportTemplate.TabIndex = 4;
+            this.tabReportTemplate.Text = "Urkundenvorlage";
+            this.tabReportTemplate.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.btnMakePdf);
+            this.tabPage2.Controls.Add(this.txtPdfPrg);
+            this.tabPage2.Controls.Add(this.label4);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(961, 622);
+            this.tabPage2.TabIndex = 5;
+            this.tabPage2.Text = "Urkunden erzeugen";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(33, 61);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(308, 20);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Programm zum Erzeugen der PDF-Datei";
+            // 
+            // txtPdfPrg
+            // 
+            this.txtPdfPrg.AllowDrop = true;
+            this.txtPdfPrg.Location = new System.Drawing.Point(36, 79);
+            this.txtPdfPrg.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtPdfPrg.Name = "txtPdfPrg";
+            this.txtPdfPrg.Size = new System.Drawing.Size(563, 22);
+            this.txtPdfPrg.TabIndex = 3;
+            this.txtPdfPrg.Text = "pdflatex";
+            // 
+            // btnMakePdf
+            // 
+            this.btnMakePdf.Location = new System.Drawing.Point(36, 133);
+            this.btnMakePdf.Name = "btnMakePdf";
+            this.btnMakePdf.Size = new System.Drawing.Size(562, 33);
+            this.btnMakePdf.TabIndex = 4;
+            this.btnMakePdf.Text = "PDF erzeugen";
+            this.btnMakePdf.UseVisualStyleBackColor = true;
+            this.btnMakePdf.Click += new System.EventHandler(this.btnMakePdf_Click);
+            // 
+            // txtTemplate
+            // 
+            this.txtTemplate.AcceptsReturn = true;
+            this.txtTemplate.AcceptsTab = true;
+            this.txtTemplate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtTemplate.Font = new System.Drawing.Font("Cascadia Code", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTemplate.Location = new System.Drawing.Point(0, 0);
+            this.txtTemplate.Multiline = true;
+            this.txtTemplate.Name = "txtTemplate";
+            this.txtTemplate.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtTemplate.Size = new System.Drawing.Size(961, 622);
+            this.txtTemplate.TabIndex = 1;
+            this.txtTemplate.Text = resources.GetString("txtTemplate.Text");
+            this.txtTemplate.WordWrap = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(888, 468);
+            this.ClientSize = new System.Drawing.Size(969, 651);
             this.Controls.Add(this.tabs);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -256,6 +333,10 @@ namespace Trampolin.FilterSportTecResults
             this.tabFilter.PerformLayout();
             this.Output.ResumeLayout(false);
             this.Output.PerformLayout();
+            this.tabReportTemplate.ResumeLayout(false);
+            this.tabReportTemplate.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -278,5 +359,11 @@ namespace Trampolin.FilterSportTecResults
         private Label label3;
         private Button btnCreateOutputGtPlace;
         private TextBox txtOutput;
+        private TabPage tabReportTemplate;
+        private TabPage tabPage2;
+        private Button btnMakePdf;
+        private TextBox txtPdfPrg;
+        private Label label4;
+        private TextBox txtTemplate;
     }
 }

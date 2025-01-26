@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using DataAccess;
@@ -66,7 +67,7 @@ namespace Trampolin.FilterSportTecResults
 
             zeilen = zeilen.OrderBy(ee => ee.Klasse).ThenBy(ee => ee.Platz).ToList();
 
-            gridInput.DataSource = zeilen; 
+            gridInput.DataSource = zeilen;
             tabs.SelectedIndex = 1;
         }
 
@@ -140,6 +141,132 @@ namespace Trampolin.FilterSportTecResults
                 if (item.Platz > place)
                 {
                     txtOutput.Text += item.Klasse + "\t" + item.Platz + "\t" + dbl(item.Punkte) + "\t" + item.Vorname + "\t" + item.Nachname + "\t" + item.Verein + "\r\n";
+                }
+            }
+        }
+
+        private void btnMakePdf_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtOutput.Text)) return;
+
+            try
+            {
+                if (!string.IsNullOrEmpty(txtTemplate.Text))
+                    File.WriteAllText("template.tex", txtTemplate.Text);
+            }
+            catch (Exception ex)
+            {
+            }
+
+
+            string header = "";
+            string template = "";
+            string footer = "";
+            bool inHeader = true;
+            bool inTemplate = false;
+            bool inFooter = false;
+            foreach (var line in txtTemplate.Text.Split('\n'))
+            {
+                string l = line.Replace("\r", "").Trim();
+                if (l.StartsWith("%%"))
+                {
+                    if (inHeader && l.Contains("FOREACH") && l.Contains("ITEM"))
+                    {
+                        inHeader = false; inTemplate = true; inFooter = false;
+                        continue;
+                    }
+                    if (inTemplate && l.Contains("NEXT") && l.Contains("ITEM"))
+                    {
+                        inHeader = false; inTemplate = false; inFooter = true;
+                        continue;
+                    }
+                }
+
+                if (inTemplate && l.Contains("%%") && l.Contains("REPLACE"))
+                {
+                    l = l.Substring(l.IndexOf("REPLACE") + 7).Trim();
+                    l = l.Replace("VORNAME", "!!VOR!!");
+                    l = l.Replace("NAME", "%%NAME%%");
+                    l = l.Replace("!!VOR!!", "%%VORNAME%%");
+                    l = l.Replace("WETTKAMPFKLASSE", "%%WETTKAMPFKLASSE%%");
+                    l = l.Replace("VEREIN", "%%VEREIN%%");
+                    l = l.Replace("PLATZ", "%%PLATZ%%");
+                    l = l.Replace("PUNKTE", "%%PUNKTE%%");
+                    template += l + "\r\n";
+                    continue;
+                }
+
+
+                if (inHeader) header += l + "\r\n";
+                if (inTemplate) template += l + "\r\n";
+                if (inFooter) footer += l + "\r\n";
+            }
+
+            string result = "";
+            result += header + "\r\n";
+            foreach (var line in txtOutput.Text.Split('\n'))
+            {
+                string l = line.Replace("\r", "").Trim();
+                if (string.IsNullOrEmpty(l)) continue;
+
+                string[] entries = l.Split('\t');
+                string r = template;
+
+                string klasse = entries[0];
+                string platz = entries[1];
+                string punkte = entries[2];
+                string vorname = entries[3];
+                string name = entries[4];
+                string verein = entries[5];
+
+                r = r.Replace("%%WETTKAMPFKLASSE%%", klasse);
+                r = r.Replace("%%VORNAME%%", vorname);
+                r = r.Replace("%%NAME%%", name);
+                r = r.Replace("%%PLATZ%%", platz);
+                r = r.Replace("%%PUNKTE%%", punkte);
+                r = r.Replace("%%VEREIN%%", verein);
+
+                result += r + "\r\n";
+            }
+            result += footer + "\r\n";
+
+            try
+            {
+                System.IO.File.WriteAllText("output.tex", result);
+
+                var pdf = System.Diagnostics.Process.Start("pdflatex", "output.tex");
+
+                System.Threading.Thread.Sleep(1000);
+
+                if (pdf.HasExited)
+                    System.Diagnostics.Process.Start("output.pdf");
+                else
+                {
+                    pdf.WaitForExit(2000);
+                    System.Diagnostics.Process.Start("output.pdf");
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        bool first_time = true;
+        private void tabs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (first_time)
+            {
+                if (tabs.SelectedIndex == 4)
+                {
+                    try
+                    {
+                        if (File.Exists("template.tex"))
+                            txtTemplate.Text = File.ReadAllText("template.tex");
+                        first_time = false;
+                    }
+                    catch (Exception ex)
+                    {
+                    }
                 }
             }
         }
